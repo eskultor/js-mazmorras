@@ -1,0 +1,431 @@
+						...intrucciones.....
+1.Introduccion.............................pag-2
+2.html.....................................pag-2
+2.variables globales ......................pag-3
+3.array del escenario......................pag-4
+4.function-cargar, principal y borrar......pag-5
+5.dibujar escenario........................pag-6
+6.crear el objeto del jugador..............pag-7
+7.lectura del teclado y movimiento.........pag-8
+8.colisiones...............................pag-9
+9.logica de objetos........................pag-10
+10.graficos tilesep e animaciones..........pag-11
+11.enemigos................................pag-12
+12.movimiento de enemigos .................pag-13
+13.hacer que el enemigo nos mate...........pag-14
+14 contenido extra animacion...............pag-15
+15.camaras-................................pag-16
+
+pag2..introduccion
+Este manual para hacer el juego de mazmorras, naturalmente tendran que tener conocimientos en html y javascript.
+Aqui se os mostrara paso a paso como realizar este juego, tambien estaran las inmagenes usadas
+asi que adlenate estas preparado pues EMPECEMOS....
+
+pag2..			-HTML-
+Despues de preparar el cuerpo del HTML, metemos la function de cargar que llavra la logica del juego.
+Podeis usar la etiqueta style para retocar el H1, hacemos el Canvas con un ancho de 1024px y un alto 520px y un border 2 px solid negro. Y un ID de tablero
+
+			-Javascripst-
+Primero creamos las variables globales, sabemos que son las que podemos llamar durante todo el codigo.
+las variables primeras del juego.
+(imagen)
+tenemos las variables de tablero la del id del canvas,luego la del ctx o contexto del canvas.
+Seguimos con los FPS(fotograma por segundo) y esta la damos un valor de 50.
+y luego definimos el tamaño de la columnas yy filas del canvas tambien de 50,la del tablero y ctx
+la dejaremos de momento en vacio mas adelnate os lo explicare.
+
+Luego veremos las variables para dibujar nuestro escenario, y las de los objetos
+(imagen)
+tenemos la de un muro un camino que de momento las asignaremos un color.
+Luego crearemos la de una puerta una llave la del jugador y de moemnto las asignaremos un color.
+luego vereis la variable del enemigo en este caso es un array u objeto vacio. por que queremos poner mas de un enemigo.
+Y tambien la variable del escenario como veis es un array padre e hijo.
+(imagen)
+
+4........ function-cargar, principal y borrar..
+Creamos la primeras funciones cargar principal y borrar canvas
+(imagen)
+En la funcion de cargar llamaremos a la variable del tablero y le damos el valor 
+document.getElementById("tablero").
+la variable ctx y le damos el valor del tablero.getContex("2d").
+Luego meteremos la funcion setInterval y dentro llamaremos la funcion Principal
+pondremos coma fuera del parantesis y ponemos 1000 (1s)dividido por los fps.
+y un console.log para comprobar si funcion
+En la funcion de principal la logica del juego tendremos las funciones de dibujar escenario(mas adelante os la explicare pero la podeis llamar de momento) y la funcion del borrar canvas
+
+En la funcion de borrar canvas sirve para que refresque cada vez que cargue el canvas,
+tendremos el ancho y alto que le dimos.
+
+		5.dibujar escenario........................pag-6
+Ahora dibujaremos el escenario, 
+creamos una variable local llamada color dejandola vacio,
+creamos un ciclo for primero que recorra las columnas de arriba abajo eje Y
+for(y = 0;y < 11;y++)y dentro de ese ciclo pondremos otro ciclo for que recorrar en horizontal eje X
+for(x = 0;x < 20;x++) y dentro de ese ciclo metemos un if(escenario[y][x]==0){color = muro} y asi todos los elementos del escenario como en la imagen.
+Despues metemos el ctx.fillstyle para que se dibuje en el canvas y depues 
+ctx.fillrect para darles las dimesiones al nuestro cuadro (x*anchoFila,y*altoFila,anchoFila,altoFila)
+los dos primeros valores donde empienza a dibujar x * ancho e y* alto y los dos ultimos valores representa el final del dibujo el ancho de fila y el alto que le dimos en las variables.
+
+		6.crear el objeto del jugador..............pag-7
+Ahora crearemos al jugador con metodos definimos la posicion del jugador this.s y this.y.
+(imagen)
+luego le asignamos un color y por ultimos hacemos una function para dibujar 
+this.dibuja(){dentro igual que el escenario ctx.fillstyle y el ctx.fillrect(this.x * anchoFila,
+this.y *altoFila,anchofila,alto fila)}pero con el metodo this delante.
+despues creamos al jugador con la var jugador = new player();
+creamos una variable global var jugado; vacia y metemos la jugador.new player dentro de la funcion de cargar para que se cargue con el escenario,tambien podemos quitar la variable de protagonista y dentro del objeto jugador enverde de this.color=protagonista ponemos el colo aki directo this.color = "red"
+(ojo declarar la var jugador como variable global)
+y por terminar metemos dentro de la funcion principal jugador.dibuja();para que lo dibuje jejej.
+
+		7.lectura del teclado y movimiento.........pag-8
+
+Dentro de la function de objeto jugador  ponemos 
+this.arriba = funtion(){this.y--}
+Y asi con todas this.abajo this.y++ izq this.x-- der this.x++ separadas
+(imagen) 
+ luego dentro de la function cargar ponemos
+document.addEventListener('keydown',function(tecla)
+{
+	if(tecla.keyCode ==38)"ojo con el keyCode"
+	{
+	console.log(Arriba)
+	}
+	y asi con todos abajo 40 izq 37 y der 39 separados.
+}
+(imagen)
+		8.colisiones...............................pag-9
+dentro del objeto player creamos otro metodo con funcion 
+this.margenes = function(x,y) le indicamos la casilla
+{
+	y una var colision = false;
+	if(escenario[y][x]) aki comprobamos a donde va ir el jugador si es cero no se movera si es otro numero si 
+	{
+		colision = true;
+	}
+	return colision;
+}
+con esto decimos que a la posicion que no queremos mover si no es muro representado con el 0
+es falsa pero si pasa lo de if es verdadera la colision y no podra moverse ahy y a final retornamos la colision a su estado inicial
+(imagen)
+despues dentro del metodo de mover al player metemos la comprobacion 
+(imagen)
+this.arriba = function()//arriba
+	{
+		if(this.margenes(this.x,this.y-1)==false)
+		{
+			this.y--;
+		}
+	} con esto comprobamos si la posicion ke vamos ahir es false se movera si es true no
+
+	9.logica de objetos........................pag-10
+bien comenzamos con crear la llave la colocamos en el escenario, y vamos hacer que cuando el player
+pase por encima la coja y ponga el escenario del mismo color que el resto del camino sin llave 
+dentro de objjeto jugador creamos el emtodo this.llave = false; por que no ha cojido ni una llave 
+(imagen)
+luego creamos otro metodo 
+this.logicaObjetos = function()
+{
+	var objeto = escenario[this.y][this.x]; una variable que compruebe donde esta el jugador y lo ke vale el escenario 
+	this.llave = true;-- la llave sera true que la cojera
+	escenario[this.y][this.x] = 2; el escenario se quitara la llave 
+	alert("Consigues una llave maquina");un mensaje de consigue llave
+}
+(imagen)
+
+la puerta parecido creamos un metodo 
+this.victoria()
+	{
+		alert("Abres la puerta Maquina");mensaje de ganar
+		this.x = 3;vuelve a poner al jugador en el eje x del inicio
+		this.y = 9;vuelve a poner al jugador en el eje y del inicio
+		this.llave = false;vuelve a poner la llave en falsa
+		escenario[4][3] = 3; y la vuelve a dibujar en el escenario posicion 
+	}
+(imagen)
+y despues debajo de la llave en la funcion logicaObjetos 
+if(objeto == 1) comrubea el escenario
+	{
+		if(this.llave == true)si tiene la llave pasara 
+		{
+			this.victoria();
+		}
+		else 'si no tiene llave no te dejara pasar'
+		{
+			alert("Te falta la llave Tonto");
+		}
+	}
+		10.graficos tilesep e animaciones..........pag-11
+
+primero dentro de la funcion dibujaescenario borramos los colores y el ctx fillstyle y fillrect
+luego dentro de la funcion de cargar ponemos que tilemaps= new imagen.Despues ponemos la direccion dond eesta la imagen con tilemaps.src='mas ruta de la imagen'.
+(imagen)
+volvemos a la function dibujarescenario y quitamos la variable de color y poneos otra 
+var cuadrito para el tilemaps
+"ctx.drawImage(tilemaps);"
+"ctx.drawImage(tilemaps,cuadro*32,0,32,32);"
+la variable del tilemaps luego la otra variable cuadro por empienza por 0 hasta el 32 en eje x donde empenza a recortar luego eje y valor cero primera fila y despues ponemos el tamaño de la imagen 32 
+"ctx.drawImage(tilemaps,cuadro*32,0,32,32,anchoFila*x,altoFila*y,anchoFila,altoFila);"
+Despues del tamaño indicamos donde no lo va dibujar las dimesiones que le dimos a la variable anchofila y alto fila y despues el tamño que va tener dentro del escenario anchofila y altofila
+(imagen),(imagen resultado)
+
+nota aclatoria
+ctx.drawImage(tilemaps,cuadro*32,0,32,32,anchoFila*x,altoFila*y,anchoFila,altoFila);
+
+primero es la variable global tilemaps donde tenemos la imagen.luego la variable local cuadro sirve para dibujar o recorta la imagen o el tilemaps
+lo mutiplicamos por 32 el tamaño de la imagen digamos ke coje la posicion 0 hasta el 32,luego en el eje y posicion 0,y luego le indicamos el tamaño de recorte ke son de 32 eje x y 32 eje Y.
+luego le indicamos donde no lo va dibujar anchofila*x todo el eje x
+y altofila todo el eje Y y para terminar el tamño ke va tener en el escenario que son anchofila y alto fila y el valor ke le dimos a esas variables.
+
+Despues no vamos a lla funcion dibujar player comentamos los ctx que tenemos pero no lo borramos
+y ponemos lo mismo pero indicando la posicion del jugador con this y quitamos la variable cuadro y bajamos la posicion del eje y en 32 para que empience a recortar de la segunda fila del tilemaps y en el eje x 32 que empience a cortar a partir del eje x 32 y obtenemos la segunda imagen de la segunda fila
+"ctx.drawImage(tilemaps,32,32,32,32,this.x*anchoFila,this.y*altoFila,anchoFila,altoFila);"
+(imagen),(imagen resultado).
+
+		11.enemigos................................pag-12
+creamos una variable enemigo pero en una matriz para meter varios enemigos  
+var enemigo = [];
+creamos el objeto enemigo creeamos la variable y le damos una posicion en x e y y un console.log para comprobar ke se crea 
+var malo = funtion(x,y)
+{
+	this.x=x;
+	this.y=y;
+	console.log("enemigo creado")
+}
+(imagen)
+
+luego dentro de la funcion de cargar creamos al enemigo 
+enemigo.push(new malo()); y ponemos tres push para añadir un valor o enemigo nuevo 
+(imagen),(imagen resultado);
+bien ya no lo crea ahora falta que nos lo dibuje vamos al objeto enemigo y ponemos 
+this.dibuja = function()
+	{
+		//ctx.fillStyle = this.color;
+		//ctx.fillRect(this.x*anchoFila,this.y*altoFila,anchoFila,altoFila);
+		ctx.drawImage(tilemaps,32,32,32,32,this.x*anchoFila,this.y*altoFila,anchoFila,altoFila);
+	} 
+	igual que para dibujar al personaje pero en el eje X ponemos cero ke empience por la pirmera imagen de la segunda fila 
+(imagen)
+y donde creamos al enemigo en la funcion cargar ponemos la posicion de los enemigos 
+(imagen),
+luego donde la funcion principal ponemos un ciclo for
+for(c = 0;enemigo.legnht;c++)
+{
+	enemigo[c].dibuja;
+}
+(imagen),(imagen resultado)
+
+		12.movimiento de enemigos .................pag-13
+dentro del objeto enemigo creamos otro metodo 
+this.direccion = Math.floor(Math.random()*4); por ke 4 por ke tiene 4 direcciones arriba abajo derecha izkierda y va ser una dirrecion aletoria entre 0 y 4 
+luego en el mismo obejto creamos un nuevo metodo funcion para comprobar ke se pued amover que no haya muro
+this.enemigoColision = function(x,y)
+	{
+		var colisiona = false;
+		if(escenario[y][x]==0)
+		{
+			colisiona = true;
+		}
+		return colisiona;
+	}
+}
+(imagen)
+luego creamos otro metodo this funcion this.movimiento =funcion
+
+this.movimiento = function()
+	{
+		//arriba
+		if(this.direccion == 0)
+		{
+			if(this.enemigoColision(this.x,this.y-1)==false)
+			{
+				this.y--; //arriba
+			}
+			else
+			{
+				this.direccion = Math.floor(Math.random()*4);
+			}
+		}
+		//abajo
+		if(this.direccion == 1)
+		{
+			if(this.enemigoColision(this.x,this.y+1)==false)
+			{
+				this.y--; //arriba
+			}
+			else
+			{
+				this.direccion = Math.floor(Math.random()*4);
+			}
+		}
+		//izquierda
+		if(this.direccion == 2)
+		{
+			if(this.enemigoColision(this.x-1,this.y)==false)
+			{
+				this.x--; //arriba
+			}
+			else
+			{
+				this.direccion = Math.floor(Math.random()*4);
+			}
+		}
+		//derecha
+		if(this.direccion == 3)
+		{
+			if(this.enemigoColision(this.x+1,this.y)==false)
+			{
+				this.x++; //arriba
+			}
+			else
+			{
+				this.direccion = Math.floor(Math.random()*4);
+			}
+		}
+(imagen)
+y para temrinar en la funcion principal llamamos la funciom de movimiento 
+(imagen)
+como vereis los enemigos se moveran muy rapido
+cramos una varibles this.retraso=50 que s emueva una vez por segundo y this.fotogramas= 0 el contador cuando llegue a 50 se mueva 
+y 
+this.movimiento = function()
+	{
+		if(this.contador < this.retraso)
+		{
+			this.contador++;
+		}
+		else
+		{
+			//arriba
+			if(this.direccion == 0)
+			{
+				if(this.enemigoColision(this.x,this.y-1)==false)
+				{
+					this.y--; //arriba
+				}
+				else
+				{
+					this.direccion = Math.floor(Math.random()*4);
+				}
+			}
+			//abajo
+			if(this.direccion == 1)
+			{
+				if(this.enemigoColision(this.x,this.y+1)==false)
+				{
+					this.y++; //arriba
+				}
+				else
+				{
+					this.direccion = Math.floor(Math.random()*4);
+				}
+			}
+			//izquierda
+			if(this.direccion == 2)
+			{
+				if(this.enemigoColision(this.x-1,this.y)==false)
+				{
+					this.x--; //arriba
+				}
+				else
+				{
+					this.direccion = Math.floor(Math.random()*4);
+				}
+			}
+			//derecha
+			if(this.direccion == 3)
+			{
+				if(this.enemigoColision(this.x+1,this.y)==false)
+				{
+					this.x++; //arriba
+				}
+				else
+				{
+					this.direccion = Math.floor(Math.random()*4);
+				}
+			}
+		}
+	}
+}
+(imagen)
+		13.hacer que el enemigo nos mate...........pag-14
+bien dentro del objeto player ponemos dos this funcion 
+una 
+//derrota
+	this.derrota = function()
+	{
+		alert("Te han cazado y estas muertoooo ¡¡¡¡¡");
+		this.x = 3;
+		this.y = 9;
+		this.llave = false;
+		escenario[4][3] = 3;
+	}
+y esto hace ke se vuelva a reiniciar todo como en la function victoria 
+(imagen)
+
+despues mas abajo pero dentro del objeto jugador hacemos otro metodo thus function
+//hacer que el enemigo nos mate
+	this.enemigoChoca = function(x,y)
+	{
+		if(this.x == x && this.y == y)
+		{
+			this.derrota();
+		}
+	}
+	(imagen)
+aqui le indicamos si el jugador esta en la misma posicion ke el enemigo ke choca ke llame a la funcion derrota hecha antes 
+
+y despues donde el objeto enemigo donde el movimiento le ponemos lo siguiente
+jugador.enemigoChoca(this.x,this.y); 
+(imagen)
+
+14 contenido extra animacion...............pag-15
+creamos un nueva funciton 
+var antorcha =function(x,y)
+{
+	this.x =x; la posicion 
+	this.y=y;
+
+	this.retraso = 10; un retraso de 10 como ke vaya a velocidad 10s
+	this.contador = 0; un contador 
+	this.fotogramas =0; //0-a 3 los fotogramas
+	this.cambiaFotograma = function()
+	{
+		if(this.fotogramas < 3) si es menor a tres k vaya sumando si no el fotogrma se pone cero
+		{
+			this.fotogramas++;
+		}
+		else
+		{
+			this.fotogramas = 0;
+		}
+	}
+	this.dibuja = function()
+	{
+		if(this.contador < this.retraso)
+		{
+			this.contador++;
+		}
+		else
+		{
+			this.contador = 0;
+			this.cambiaFotograma();
+		}
+		ctx.drawImage(tilemaps,this.fotogramas*32,64,32,32,this.x*anchoFila,this.y*altoFila,anchoFila,altoFila);
+		aqui bajamos el eje y a 64 y mutiplicamos los fotogramas por eje x 
+
+	}
+}
+(imagen)
+luego dentro de la funcion de cargar creamos la imagen 
+imagenAntorcha = new antorcha(1,1);
+(imagen)
+ y en a funcion principal la dibujamos 
+ imagenAntorcha.dibuja();
+ (imagen)
+
+
+
+
+
+
+
